@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<meta name="description" content="20대의 생각을 묻는 약 2~3분 설문입니다. 아주대학교 마켓 이노베이션 1조.">
+<!-- 링크 미리보기(Open Graph). 배포 주소(https://mjluis.github.io/xreal-aura-survey/) 기준으로 설정되어 있습니다. 저장소나 주소가 바뀌면 og:url, og:image도 함께 바꾸십시오(README 참고). -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AI 글라스 설문">
+<meta property="og:title" content="AI 글라스, 어떻게 생각하세요?">
+<meta property="og:description" content="20대의 생각을 묻는 약 2~3분 설문입니다.">
+<meta property="og:url" content="https://mjluis.github.io/xreal-aura-survey/">
+<meta property="og:image" content="https://mjluis.github.io/xreal-aura-survey/og.png?v=1">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="600">
+<meta property="og:image:alt" content="AI 글라스, 어떻게 생각하세요? 20대 대상 설문">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#ffffff">
+<title>AI 글라스 설문</title>
+<style>
+:root{
+  --bg:#ffffff; --bg2:#f5f5f7; --ink:#1d1d1f; --ink2:#6e6e73; --line:#d2d2d7;
+  --blue:#0071e3; --blue-d:#0077ed; --err:#d70015;
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Apple SD Gothic Neo","Pretendard","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+.bar{position:fixed;top:0;left:0;right:0;height:3px;background:transparent;z-index:10}
+.bar i{display:block;height:100%;width:0;background:var(--blue);transition:width .4s cubic-bezier(.28,.11,.32,1)}
+header.top{display:flex;align-items:center;justify-content:space-between;height:52px;padding:0 max(20px,env(safe-area-inset-left));font-size:13px;color:var(--ink2)}
+header.top button{background:none;border:0;color:var(--blue);font:inherit;font-size:15px;padding:12px 4px;cursor:pointer;min-height:44px}
+header.top button[hidden]{display:block;visibility:hidden}
+main{flex:1;width:100%;max-width:680px;margin:0 auto;padding:8px 22px calc(40px + env(safe-area-inset-bottom))}
+.screen{animation:in .45s cubic-bezier(.28,.11,.32,1) both}
+@keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.screen{animation:none}.bar i{transition:none}}
+.eyebrow{font-size:15px;font-weight:600;color:var(--ink2);margin:20px 0 8px;letter-spacing:-.01em}
+h1{font-size:clamp(32px,8.4vw,52px);line-height:1.1;font-weight:700;letter-spacing:-.035em;margin:0 0 16px;word-break:keep-all}
+h2{font-size:clamp(25px,6.6vw,34px);line-height:1.18;font-weight:700;letter-spacing:-.03em;margin:0 0 10px;word-break:keep-all}
+p.lead{font-size:clamp(17px,4.4vw,21px);line-height:1.45;color:var(--ink2);margin:0 0 28px;letter-spacing:-.012em;word-break:keep-all}
+p.small{font-size:13px;line-height:1.55;color:var(--ink2);margin:18px 0 0;word-break:keep-all}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 30px;border:0;border-radius:980px;background:var(--blue);color:#fff;font:inherit;font-size:17px;font-weight:500;letter-spacing:-.01em;cursor:pointer;transition:background .2s,transform .15s,opacity .2s}
+.btn:hover{background:var(--blue-d)} .btn:active{transform:scale(.98)}
+.btn[disabled]{opacity:.35;cursor:not-allowed}
+.btn.block{width:100%}
+.btn.ghost{background:var(--bg2);color:var(--ink)}
+.opts{display:grid;gap:12px;margin-top:26px}
+.opt{display:flex;align-items:center;min-height:64px;padding:16px 20px;border:1px solid var(--line);border-radius:18px;background:#fff;font:inherit;font-size:18px;font-weight:500;color:var(--ink);text-align:left;cursor:pointer;letter-spacing:-.015em;transition:border-color .2s,background .2s,box-shadow .2s;word-break:keep-all;width:100%}
+.opt small{display:block;font-size:14px;font-weight:400;color:var(--ink2);margin-top:3px}
+.opt:hover{border-color:#86868b}
+.opt[aria-checked="true"]{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue);background:#f5faff}
+:focus-visible{outline:3px solid rgba(0,113,227,.55);outline-offset:2px}
+.other-wrap{margin-top:12px}
+.def{font-size:15px;line-height:1.6;color:var(--ink2);background:var(--bg2);border-radius:16px;padding:14px 16px;margin:0 0 22px;word-break:keep-all}
+.hint{font-size:14px;color:var(--ink2);margin:0 0 4px}
+.opt[role="checkbox"]::before{content:"";flex:none;width:24px;height:24px;margin-right:14px;border-radius:8px;border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:15px;color:#fff;transition:all .18s}
+.opt[role="checkbox"][aria-checked="true"]::before{content:"✓";background:var(--blue);border-color:var(--blue)}
+.opt[aria-disabled="true"]{opacity:.4;cursor:not-allowed}
+.other-wrap input{width:100%;min-height:52px;padding:0 18px;border:1px solid var(--line);border-radius:14px;font:inherit;font-size:17px;color:var(--ink)}
+.spec{margin:22px 0 0;background:var(--bg2);border-radius:22px;padding:6px 22px}
+.spec div.row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:18px 0;border-bottom:1px solid #e3e3e6}
+.spec div.row:last-child{border-bottom:0}
+.spec dt{font-size:14px;color:var(--ink2);margin:0;white-space:nowrap}
+.spec dd{margin:0;text-align:right;font-size:clamp(19px,5vw,24px);font-weight:600;letter-spacing:-.025em;word-break:keep-all}
+.spec dd small{display:block;font-size:12.5px;font-weight:400;color:var(--ink2);letter-spacing:0;margin-top:3px}
+details.common{margin:16px 2px 0;font-size:13.5px;color:var(--ink2);line-height:1.6}
+details.common summary{cursor:pointer;color:var(--blue);list-style:none;padding:6px 0}
+details.common summary::-webkit-details-marker{display:none}
+.scale{margin-top:30px}
+.scale .pts{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:clamp(4px,1.2vw,10px)}
+.pt{aspect-ratio:1;min-width:0;padding:0;border-radius:50%;border:1px solid var(--line);background:#fff;font:inherit;font-size:clamp(16px,4.6vw,20px);font-weight:600;color:var(--ink);cursor:pointer;transition:all .18s}
+.pt:hover{border-color:#86868b}
+.pt[aria-checked="true"]{background:var(--blue);border-color:var(--blue);color:#fff;transform:scale(1.06)}
+.scale .ends{display:flex;justify-content:space-between;margin-top:12px;font-size:13px;color:var(--ink2)}
+.err{color:var(--err);font-size:14px;line-height:1.5;margin-top:14px}
+.center{text-align:center;padding-top:12vh}
+.check{width:72px;height:72px;border-radius:50%;background:var(--blue);margin:0 auto 26px;display:flex;align-items:center;justify-content:center}
+.check svg{width:34px;height:34px;stroke:#fff;fill:none;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+footer{padding:20px;text-align:center;font-size:12px;color:#86868b}
+.spinner{width:22px;height:22px;border:3px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite;margin-right:10px}
+@keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="bar" aria-hidden="true"><i id="bar"></i></div>
+<header class="top"><button id="back" type="button" hidden>‹ 이전</button><span id="count" aria-live="polite"></span><span style="width:48px"></span></header>
+<main id="app" aria-live="polite"></main>
+<footer>아주대학교 마켓 이노베이션 1조 · 수업 과제용 설문</footer>
+<input class="hp" id="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+<script src="config.js"></script>
+<script>
+(function(){
+"use strict";
+var CFG = window.SURVEY_CONFIG || {};
+var QS = new URLSearchParams(location.search);
+var IS_TEST = QS.get("test") === "1";
+var SRC = (QS.get("src") || "").replace(/[^A-Za-z0-9_-]/g,"").slice(0,40) || null;
+var KEY_STATE = "xr_survey_state_v4", KEY_PENDING = "xr_survey_pending_v4", KEY_DONE = "xr_survey_done_v4", KEY_LOCAL = "xr_survey_local_v4";
+
+/* 2^(4-1) 요인 설계: [price_low, apps_many, peers_many, standalone] — 상품 1~8 */
+var PROFILES = [[0,0,0,0],[0,0,1,1],[0,1,0,1],[0,1,1,0],[1,0,0,1],[1,0,1,0],[1,1,0,0],[1,1,1,1]];
+var LV = {
+  price:["169만 원","100만 원"],
+  apps:["약 20개","약 300개"],
+  peers:["친구 10명 중 0명","친구 10명 중 4명"],
+  form:["퍽 분리형","단독형"]
+};
+var FORM_NOTE = ["글라스와 별도 컴퓨팅 퍽을 케이블로 연결","퍽 없이 글라스 하나로 사용 (케이블 없음)"];
+var Q3 = [
+  ["price","가격이 부담스럽다"],["apps","쓸 수 있는 앱·콘텐츠가 부족하다"],["peers","주변에 쓰는 사람이 없다"],
+  ["comfort","착용감·디자인이 불편해 보인다"],["privacy","개인정보·안전이 걱정된다"]
+];
+
+var AGE = [["20_22","만 20~22세"],["23_25","만 23~25세"],["26_27","만 26~27세"],["28_29","만 28~29세"]];
+var WTP = [["lt100","100만 원 미만"],["100_150","100만 원 이상 150만 원 미만"],["150_170","150만 원 이상 170만 원 미만"],["170_200","170만 원 이상 200만 원 미만"],["gte200","200만 원 이상"],["none","구매할 의향이 없다"]];
+var Q4 = [["apps_lack","내가 자주 사용할 만한 앱이나 콘텐츠가 부족할 것 같아서"],["substitute","기존 스마트폰이나 노트북의 앱으로 충분히 대체할 수 있어서"],["complex","앱이나 콘텐츠의 사용 방법이 복잡할 것 같아서"],["peers_lack","다른 이용자와 함께 활용할 수 있는 서비스가 부족할 것 같아서"],["supply_uncertain","새로운 앱과 콘텐츠가 지속적으로 제공될지 불확실해서"]];
+var Q4_NONE = ["none","특별히 망설일 이유가 없다"];
+var Q4_CANON = ["apps_lack","substitute","complex","peers_lack","supply_uncertain","none"];
+function inList(list,v){ return list.some(function(x){ return x[0]===v; }); }
+
+/* ---------- 유틸 ---------- */
+function randInt(n){ var a=new Uint32Array(1), lim=Math.floor(4294967296/n)*n, x; do{ crypto.getRandomValues(a); x=a[0]; }while(x>=lim); return x%n; }
+function shuffle(arr){ var a=arr.slice(), i, j, t; for(i=a.length-1;i>0;i--){ j=randInt(i+1); t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+function uuid(){ if(crypto.randomUUID) return crypto.randomUUID(); var b=crypto.getRandomValues(new Uint8Array(16)); b[6]=(b[6]&15)|64; b[8]=(b[8]&63)|128; var h=[].map.call(b,function(x){return ("0"+x.toString(16)).slice(-2)}).join(""); return h.slice(0,8)+"-"+h.slice(8,12)+"-"+h.slice(12,16)+"-"+h.slice(16,20)+"-"+h.slice(20); }
+function el(tag, attrs, kids){ var e=document.createElement(tag), k; for(k in (attrs||{})){ if(k==="class") e.className=attrs[k]; else if(k==="text") e.textContent=attrs[k]; else e.setAttribute(k,attrs[k]); } (kids||[]).forEach(function(c){ if(c) e.appendChild(typeof c==="string"?document.createTextNode(c):c); }); return e; }
+function ls(op,k,v){ try{ if(op==="get") return localStorage.getItem(k); if(op==="set") localStorage.setItem(k,v); if(op==="del") localStorage.removeItem(k); }catch(e){} return null; }
+function deviceType(){ var w=Math.min(screen.width||innerWidth, screen.height||innerHeight)||innerWidth; var ua=navigator.userAgent||""; if(/iPad|Tablet/i.test(ua)||(w>=600&&w<1000&&"ontouchstart" in window)) return "tablet"; if(/Mobi|Android|iPhone/i.test(ua)||w<600) return "mobile"; return "desktop"; }
+
+/* ---------- 상태 ---------- */
+var S = null;
+function freshState(){
+  return { id:uuid(), step:"intro", t_start:null, age:null, q1:null, q2:null, wtp:null, order:shuffle([1,2,3,4,5,6,7,8]), q3order:shuffle(Q3.map(function(x){return x[0];})),
+           q4order:shuffle(Q4.map(function(x){return x[0];})), intent:{}, ms:{}, q3:null, q3other:"", q4:[] };
+}
+function load(){
+  var raw=ls("get",KEY_STATE);
+  if(raw){ try{ var s=JSON.parse(raw); if(s && s.id && s.order && s.order.length===8 && s.q4order) return s; }catch(e){} }
+  return freshState();
+}
+function save(){ ls("set",KEY_STATE,JSON.stringify(S)); }
+var STEPS = ["intro","age","q1","q2","wtp","c0","c1","c2","c3","c4","c5","c6","c7","q3","q4"];
+var enteredAt = 0;
+function leaveTiming(){ // 카드 화면 체류 시간 누적
+  if(/^c\d$/.test(S.step) && enteredAt){ var pid=S.order[+S.step[1]]; S.ms[pid]=(S.ms[pid]||0)+Math.min(Date.now()-enteredAt,600000); }
+  enteredAt=0;
+}
+function go(step){ leaveTiming(); S.step=step; enteredAt=Date.now(); save(); render(); window.scrollTo(0,0); }
+function next(){ var i=STEPS.indexOf(S.step); go(STEPS[i+1]); }
+function prev(){ if(S.step==="out"){ S.age=null; go("age"); return; } var i=STEPS.indexOf(S.step); if(i>1) go(STEPS[i-1]); }
+function advance(from){ setTimeout(function(){ if(S.step===from) next(); },220); }
+
+/* ---------- 렌더 ---------- */
+var app=document.getElementById("app"), bar=document.getElementById("bar"), count=document.getElementById("count"), backBtn=document.getElementById("back");
+backBtn.addEventListener("click",prev);
+function progress(){
+  var i=STEPS.indexOf(S.step), pct=i<0?100:Math.round(i/STEPS.length*100);
+  bar.style.width=pct+"%";
+  backBtn.hidden = !(i>1);
+  count.textContent = /^c\d$/.test(S.step) ? "상품 "+(+S.step[1]+1)+" / 8" : "";
+}
+function screen(kids){ app.replaceChildren(el("section",{class:"screen"},kids)); }
+function choice(opts, cur, onPick, name){
+  var wrap=el("div",{class:"opts",role:"radiogroup","aria-label":name});
+  opts.forEach(function(o){
+    var b=el("button",{type:"button",class:"opt",role:"radio","aria-checked":String(cur===o[0])},[o[1], o[2]?el("small",{text:o[2]}):null]);
+    b.addEventListener("click",function(){ [].forEach.call(wrap.children,function(c){ c.setAttribute("aria-checked",String(c===b)); }); onPick(o[0]); });
+    wrap.appendChild(b);
+  });
+  return wrap;
+}
+
+function render(){
+  progress();
+  var st=S.step;
+  if(st==="intro") return renderIntro();
+  if(st==="age") return screen([el("p",{class:"eyebrow",text:"시작하기 전에"}), el("h2",{text:"연령대를 선택해 주세요."}),
+      choice(AGE.concat([["out","만 20~29세가 아닙니다"]]), S.age, function(v){ S.age=v; save(); setTimeout(function(){ if(S.step!=="age") return; if(v==="out") go("out"); else next(); },220); }, "연령대")]);
+  if(st==="q1") return screen([el("p",{class:"eyebrow",text:"기본 정보"}), el("h2",{text:"주로 사용하는 스마트폰은 무엇인가요?"}),
+      choice([["iphone","iPhone"],["galaxy","Galaxy (삼성)"],["other","기타"]], S.q1, function(v){ S.q1=v; save(); advance("q1"); }, "스마트폰")]);
+  if(st==="q2") return screen([el("p",{class:"eyebrow",text:"기본 정보"}), el("h2",{text:"AI 글라스·스마트 글라스·VR 기기를 써 본 적이 있나요?"}),
+      choice([["none","사용해 본 적 없음"],["tried","체험해 본 적 있음"],["owner","보유하고 있거나 정기적으로 사용"]], S.q2, function(v){ S.q2=v; save(); advance("q2"); }, "사용 경험")]);
+  if(st==="wtp") return screen([el("p",{class:"eyebrow",text:"AI 글라스에 대해"}),
+      el("p",{class:"def",text:"AI 글라스는 안경 형태의 웨어러블 기기로, 제품에 따라 렌즈나 시야에 디지털 정보를 표시하거나 AI 음성 비서, 실시간 번역, 사진·영상 촬영, 가상 화면 등의 기능을 제공합니다. 제품마다 기능은 다를 수 있습니다."}),
+      el("h2",{text:"AI 글라스를 구매한다면, 지불할 수 있는 최대 금액은 어느 정도입니까?"}),
+      choice(WTP, S.wtp, function(v){ S.wtp=v; save(); advance("wtp"); }, "지불 가능 금액")]);
+  if(/^c\d$/.test(st)) return renderCard(+st[1]);
+  if(st==="q3") return renderQ3();
+  if(st==="q4") return renderQ4();
+  if(st==="out") return renderOut();
+  if(st==="sending") return renderSending();
+  if(st==="done") return renderDone();
+  if(st==="fail") return renderFail();
+  go("intro");
+}
+function renderIntro(){
+  var done=ls("get",KEY_DONE);
+  if(done && !IS_TEST){ return screen([el("div",{class:"center"},[el("h1",{text:"이미 참여해 주셨습니다"}), el("p",{class:"lead",text:"응답은 1인 1회만 받습니다. 감사합니다."})])]); }
+  var btn=el("button",{type:"button",class:"btn block",text:"동의하고 시작"});
+  btn.addEventListener("click",function(){ S.t_start=S.t_start||new Date().toISOString(); next(); });
+  screen([ el("p",{class:"eyebrow",text:"AI 글라스 설문 · 약 2~3분"}),
+    el("h1",{text:"AI 글라스,\n어떻게 생각하세요?"}),
+    el("p",{class:"lead",text:"20대의 생각을 알아보는 아주 짧은 설문입니다. 정답은 없습니다."}),
+    btn,
+    el("p",{class:"small",text:"아주대학교 「마켓 이노베이션」 수업의 팀 과제를 위한 설문입니다. 응답은 익명으로 저장되며 과제 분석에만 사용됩니다. 이름과 연락처는 묻지 않습니다. 참여는 자발적이며 언제든 창을 닫아 중단할 수 있습니다."}) ]);
+  document.querySelector("h1").style.whiteSpace="pre-line";
+}
+function renderCard(i){
+  var pid=S.order[i], p=PROFILES[pid-1], cur=S.intent[pid];
+  var spec=el("dl",{class:"spec"},[
+    el("div",{class:"row"},[el("dt",{text:"가격"}), el("dd",{text:LV.price[p[0]]})]),
+    el("div",{class:"row"},[el("dt",{text:"XR 전용 앱·콘텐츠"}), el("dd",{text:LV.apps[p[1]]})]),
+    el("div",{class:"row"},[el("dt",{text:"주변 사용자"}), el("dd",{text:LV.peers[p[2]]})]),
+    el("div",{class:"row"},[el("dt",{text:"형태"}), el("dd",{},[LV.form[p[3]], el("small",{text:FORM_NOTE[p[3]]})])])
+  ]);
+  var pts=el("div",{class:"pts",role:"radiogroup","aria-label":"구매 의향 1점에서 7점"});
+  for(var n=1;n<=7;n++){ (function(n){
+    var b=el("button",{type:"button",class:"pt",role:"radio","aria-checked":String(cur===n),"aria-label":n+"점",text:String(n)});
+    b.addEventListener("click",function(){ pick(n); }); pts.appendChild(b); })(n); }
+  function pick(n){
+    S.intent[pid]=n; save();
+    [].forEach.call(pts.children,function(c,k){ c.setAttribute("aria-checked",String(k+1===n)); });
+    setTimeout(function(){ if(S.step==="c"+i) next(); },260);
+  }
+  keyHandler=function(e){ if(/^[1-7]$/.test(e.key) && !e.metaKey && !e.ctrlKey && document.activeElement.tagName!=="INPUT") pick(+e.key); };
+  screen([ el("p",{class:"eyebrow",text:"상품 평가"}),
+    el("h2",{text:"이 AI 글라스를 앞으로 1년 이내에 구매할 의향이 있나요?"}),
+    spec,
+    el("details",{class:"common"},[el("summary",{text:"모든 상품에 공통인 사양 보기"}), el("div",{text:"Android XR · Gemini AI 비서 · 시야각 70도 투명 렌즈 · 약 95g 미만 · 유튜브·지도 등 기본 앱 사용 가능. 위 네 가지만 상품마다 다릅니다."})]),
+    el("div",{class:"scale"},[pts, el("div",{class:"ends"},[el("span",{text:"1 전혀 없다"}), el("span",{text:"4 보통"}), el("span",{text:"7 매우 높다"})])]) ]);
+}
+var keyHandler=null;
+document.addEventListener("keydown",function(e){ if(keyHandler) keyHandler(e); });
+
+function renderQ3(){
+  var items=S.q3order.map(function(k){ return [k, Q3.filter(function(x){return x[0]===k;})[0][1]]; }); items.push(["other","기타"]);
+  var inputWrap=el("div",{class:"other-wrap"}); var inp=el("input",{type:"text",maxlength:"100",placeholder:"직접 입력 (선택)","aria-label":"기타 이유 직접 입력"}); inp.value=S.q3other||"";
+  inp.addEventListener("input",function(){ S.q3other=inp.value.slice(0,100); save(); });
+  inputWrap.appendChild(inp); inputWrap.hidden = S.q3!=="other";
+  var fin=el("button",{type:"button",class:"btn block",text:"다음"}); fin.disabled=!S.q3; fin.style.marginTop="26px";
+  var group=choice(items, S.q3, function(v){ S.q3=v; save(); [].forEach.call(group.children,function(c,i){ c.setAttribute("aria-checked",String(items[i][0]===v)); }); inputWrap.hidden=(v!=="other"); fin.disabled=false; if(v==="other") inp.focus(); }, "망설이는 이유");
+  fin.addEventListener("click",function(){ if(S.q3 && S.step==="q3") next(); });
+  keyHandler=null;
+  screen([ el("p",{class:"eyebrow",text:"거의 끝났습니다"}), el("h2",{text:"AI 글라스 구매를 가장 망설이게 하는 이유는 무엇인가요?"}), el("p",{class:"lead",text:"한 가지만 골라 주세요."}), group, inputWrap, fin ]);
+}
+function renderQ4(){
+  var items=S.q4order.map(function(k){ return Q4.filter(function(x){return x[0]===k;})[0]; }); items.push(Q4_NONE);
+  var wrap=el("div",{class:"opts",role:"group","aria-label":"망설이는 이유 (최대 2개)"});
+  var fin=el("button",{type:"button",class:"btn block",text:"제출하기"}); fin.style.marginTop="26px";
+  function sync(){
+    [].forEach.call(wrap.children,function(c,i){ var k=items[i][0], on=S.q4.indexOf(k)>=0;
+      c.setAttribute("aria-checked",String(on)); c.setAttribute("aria-disabled",String(!on && k!=="none" && S.q4.length>=2)); });  // "없다"는 항상 눌러 초기화할 수 있음
+    fin.disabled = S.q4.length<1;
+  }
+  items.forEach(function(it){
+    var b=el("button",{type:"button",class:"opt",role:"checkbox","aria-checked":"false",text:it[1]});
+    b.addEventListener("click",function(){
+      var k=it[0], on=S.q4.indexOf(k)>=0;
+      if(k==="none"){ S.q4 = on ? [] : ["none"]; }
+      else {
+        S.q4 = S.q4.filter(function(x){ return x!=="none"; });
+        if(on) S.q4 = S.q4.filter(function(x){ return x!==k; });
+        else if(S.q4.length<2) S.q4.push(k);
+      }
+      save(); sync();
+    });
+    wrap.appendChild(b);
+  });
+  fin.addEventListener("click",function(){ if(S.q4.length>=1) submit(); });
+  keyHandler=null; sync();
+  screen([ el("p",{class:"eyebrow",text:"마지막 질문"}),
+    el("h2",{text:"AI 글라스에 다양한 앱과 콘텐츠가 제공되더라도, 실제 사용을 망설이게 하는 가장 큰 이유는 무엇일 것 같습니까?"}),
+    el("p",{class:"hint",text:"최대 2개까지 선택할 수 있습니다."}), wrap, fin ]);
+}
+function renderOut(){ keyHandler=null; bar.style.width="100%"; backBtn.hidden=false; screen([el("div",{class:"center"},[el("h1",{text:"감사합니다"}), el("p",{class:"lead",text:"이번 설문은 만 20~29세를 대상으로 합니다. 관심 가져 주셔서 감사합니다."})])]); }
+function renderSending(){ keyHandler=null; screen([el("div",{class:"center"},[el("h2",{text:"응답을 저장하는 중입니다"}), el("p",{class:"lead",text:"잠시만 기다려 주세요."})])]); }
+function renderDone(){ keyHandler=null; bar.style.width="100%"; backBtn.hidden=true; count.textContent="";
+  var kids=[el("div",{class:"center"},[ (function(){ var c=el("div",{class:"check"}); c.innerHTML='<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>'; return c; })(),
+    el("h1",{text:"참여해 주셔서 감사합니다"}), el("p",{class:"lead",text:"응답이 저장되었습니다. 이제 창을 닫으셔도 됩니다."}) ])];
+  if(!CFG.SUPABASE_URL) kids.push(el("p",{class:"small",text:"로컬 테스트 모드: 서버로 전송되지 않고 이 브라우저에만 저장되었습니다."}));
+  screen(kids); }
+function renderFail(){ keyHandler=null; backBtn.hidden=true;
+  var b=el("button",{type:"button",class:"btn block",text:"다시 시도"}); b.addEventListener("click",function(){ submit(true); });
+  screen([el("h2",{text:"저장하지 못했습니다"}), el("p",{class:"lead",text:"인터넷 연결을 확인한 뒤 다시 시도해 주세요. 입력하신 응답은 이 기기에 보관되어 있습니다."}), b, el("p",{class:"err",id:"errmsg",text:S.lastError||""})]); }
+
+/* ---------- 제출 ---------- */
+function buildPayload(){
+  var now=new Date(), start=new Date(S.t_start||now.toISOString());
+  var p={ resp_id:S.id, t_start:start.toISOString(), t_end:now.toISOString(), duration_sec:Math.max(0,Math.round((now-start)/1000)),
+    age_band:S.age, q1_phone:S.q1, q2_xr:S.q2, wtp_band:S.wtp, card_order:S.order, card_ms:S.order.map(function(pid){ return Math.round(S.ms[pid]||0); }),
+    q3_barrier:S.q3, q3_other:(S.q3==="other" && S.q3other.trim())?S.q3other.trim().slice(0,100):null,
+    q4_constraints:Q4_CANON.filter(function(k){ return S.q4.indexOf(k)>=0; }),
+    device_type:deviceType(), form_version:CFG.FORM_VERSION||"v4", is_test:IS_TEST, src:SRC };
+  for(var k=1;k<=8;k++) p["intent_p"+k]=S.intent[k];
+  return p;
+}
+function validate(){
+  if(!inList(AGE,S.age)) return "연령대 확인이 필요합니다.";
+  if(!S.q1||!S.q2||!inList(WTP,S.wtp)) return "앞의 문항에 응답해 주세요.";
+  for(var k=1;k<=8;k++) if(!(S.intent[k]>=1&&S.intent[k]<=7)) return "상품 "+k+"에 응답해 주세요.";
+  if(!S.q3) return "마지막 질문에 응답해 주세요.";
+  if(!(S.q4.length>=1 && S.q4.length<=2)) return "마지막 질문에 응답해 주세요.";
+  return null;
+}
+function missingStep(){
+  if(!inList(AGE,S.age)) return "age"; if(!S.q1) return "q1"; if(!S.q2) return "q2"; if(!inList(WTP,S.wtp)) return "wtp";
+  for(var i=0;i<8;i++) if(!S.intent[S.order[i]]) return "c"+i;
+  if(!S.q3) return "q3";
+  return S.q4.length<1?"q4":null;
+}
+var sending=false;
+function sleep(ms){ return new Promise(function(r){ setTimeout(r,ms); }); }
+async function post(payload){
+  var url=CFG.SUPABASE_URL.replace(/\/+$/,"")+"/rest/v1/"+(CFG.TABLE||"responses");
+  var ctl=new AbortController(), to=setTimeout(function(){ ctl.abort(); },12000);
+  try{
+    var res=await fetch(url,{ method:"POST", signal:ctl.signal,
+      headers:{ "apikey":CFG.SUPABASE_KEY, "Content-Type":"application/json", "Prefer":"return=minimal" },
+      body:JSON.stringify(payload) });
+    if(res.ok) return {ok:true};
+    if(res.status===409) return {ok:true,dup:true}; // 같은 resp_id가 이미 저장됨(재전송) → 성공으로 처리
+    var t=""; try{ t=(await res.text()).slice(0,300); }catch(e){}
+    return {ok:false,status:res.status,msg:"HTTP "+res.status+" "+t};
+  }catch(e){ return {ok:false,status:0,msg:String(e&&e.message||e)}; }
+  finally{ clearTimeout(to); }
+}
+async function submit(isRetry){
+  if(sending) return; if(document.getElementById("hp").value) return; // 봇 차단(허니팟)
+  var v=validate(); if(v){ var m=missingStep(); if(m) go(m); return; }
+  leaveTiming(); save();
+  sending=true; if(S.step!=="sending"){ S.step="sending"; render(); }
+  var payload=(isRetry && ls("get",KEY_PENDING)) ? JSON.parse(ls("get",KEY_PENDING)) : buildPayload();
+  ls("set",KEY_PENDING,JSON.stringify(payload));
+  var ok=false, err="";
+  if(!CFG.SUPABASE_URL){ // 로컬 테스트 모드
+    var arr=[]; try{ arr=JSON.parse(ls("get",KEY_LOCAL)||"[]"); }catch(e){}
+    arr.push(payload); ls("set",KEY_LOCAL,JSON.stringify(arr)); ok=true;
+  } else {
+    var waits=[0,1200,3500];
+    for(var a=0;a<waits.length && !ok;a++){
+      if(waits[a]) await sleep(waits[a]);
+      var r=await post(payload); ok=r.ok; err=r.msg||"";
+      if(!ok && r.status>=400 && r.status<500 && r.status!==408 && r.status!==429) break; // 재시도해도 소용없는 오류
+    }
+  }
+  sending=false;
+  if(ok){ ls("del",KEY_PENDING); ls("del",KEY_STATE); if(!IS_TEST) ls("set",KEY_DONE,S.id); S.step="done"; render(); }
+  else { S.lastError=err; S.step="fail"; save(); render(); }
+}
+
+/* ---------- 시작 ---------- */
+S=load();
+if(S.step==="sending") S.step="q4";
+if(S.step==="done"||S.step==="out"||S.step==="fail"){ if(S.step==="fail" && ls("get",KEY_PENDING)){} else { S=freshState(); } }
+enteredAt=Date.now();
+render();
+window.__survey={ get state(){return S;}, PROFILES:PROFILES };
+})();
+</script>
+</body>
+</html>
