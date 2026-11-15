@@ -4,5 +4,5 @@ window.SURVEY_CONFIG = {
   SUPABASE_URL: "https://kdflmoittqbaelwokctp.supabase.co",
   SUPABASE_KEY: "sb_publishable_aizP8kEEFjQvqk3_qDJG_w_84OeE_Ss",
   TABLE: "responses",
-  FORM_VERSION: "v4"
+  FORM_VERSION: "v5"
 };
