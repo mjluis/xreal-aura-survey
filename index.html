@@ -84,6 +84,7 @@ p.prose{font-size:16px;line-height:1.6;color:var(--ink);margin:0 0 12px;letter-s
 .diagram svg{display:block;width:100%;max-width:340px;height:auto;max-height:68px;margin:0 auto}
 .diagram text{fill:var(--ink2);font-family:var(--font);font-size:12px}
 p.source{margin-top:14px}
+p.notice{margin:2px 0 4px}
 .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
 footer{padding:20px;text-align:center;font-size:12px;color:#86868b}
 .spinner{width:22px;height:22px;border:3px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite;margin-right:10px}
@@ -358,6 +359,7 @@ function renderProduct(){
   screen([ el("p",{class:"eyebrow",text:"제품 소개"}), el("h2",{text:"XREAL AURA 소개"}),
     el("p",{class:"prose",text:"AR·XR 안경을 만드는 XREAL의 AURA는 주변 환경을 보면서 그 위에 디지털 화면을 겹쳐 볼 수 있는 안경형 기기입니다(시야각 70도, 안경 약 95g). Google의 Android XR 기반이고 Gemini AI를 사용할 수 있습니다."}),
     el("p",{class:"prose",text:"앱을 실행하는 컴퓨터는 안경이 아니라, 케이블로 연결하는 별도 기기인 '컴퓨팅 퍽'(약 265g)에 들어 있습니다. 조작은 손동작, 음성, 퍽의 터치패드로 합니다."}),
+    el("p",{class:"small notice",text:"이후 문항의 상품 정보(가격 등)는 가상 상품이며 실제 제품과 다를 수 있습니다."}),
     fig, btn,
     el("p",{class:"small source",text:"정보 출처: XREAL 공식 제품 페이지, Google 공식 블로그(2026-10-28), 2026-11-15 열람."}) ]);
 }

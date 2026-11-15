@@ -109,7 +109,7 @@ with sync_playwright() as p:
     txt=pg.inner_text("main")
     hits=[f for f in FORBIDDEN if re.search(f,txt)]
     check(not hits,f"제품 소개 화면에 금지 문구 없음(가격·앱 개수·수백·할인·Catalyst·느낌표 등) {hits}")
-    check("시야각 70도" in txt and "약 95g" in txt and "약 265g" in txt and "정보 출처: XREAL 공식 제품 페이지, Google 공식 블로그(2026-10-28), 2026-11-15 열람." in txt,"제품 소개 본문·출처 문구 포함")
+    check("시야각 70도" in txt and "약 95g" in txt and "약 265g" in txt and "정보 출처: XREAL 공식 제품 페이지, Google 공식 블로그(2026-10-28), 2026-11-15 열람." in txt and "이후 문항의 상품 정보(가격 등)는 가상 상품이며 실제 제품과 다를 수 있습니다." in txt,"제품 소개 본문·가상 상품 안내·출처 문구 포함")
     check(pg.locator(".diagram svg").count()==1 and pg.locator("main img").count()==0,"직접 그린 인라인 SVG 1개, 이미지 없음")
     check(pg.locator(".btn.block").inner_text()=="다음","제품 소개는 '다음' 버튼으로 진행")
     pg.wait_for_timeout(400); pg.reload(); pg.wait_for_selector("h2:has-text('XREAL AURA 소개')")
