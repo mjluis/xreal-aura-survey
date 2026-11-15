@@ -79,6 +79,11 @@ details.common summary::-webkit-details-marker{display:none}
 .center{text-align:center;padding-top:12vh}
 .check{width:72px;height:72px;border-radius:50%;background:var(--blue);margin:0 auto 26px;display:flex;align-items:center;justify-content:center}
 .check svg{width:34px;height:34px;stroke:#fff;fill:none;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
+p.prose{font-size:16px;line-height:1.6;color:var(--ink);margin:0 0 12px;letter-spacing:-.01em;word-break:keep-all}
+.diagram{color:var(--ink);margin:6px 0 18px}
+.diagram svg{display:block;width:100%;max-width:340px;height:auto;max-height:68px;margin:0 auto}
+.diagram text{fill:var(--ink2);font-family:var(--font);font-size:12px}
+p.source{margin-top:14px}
 .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
 footer{padding:20px;text-align:center;font-size:12px;color:#86868b}
 .spinner{width:22px;height:22px;border:3px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite;margin-right:10px}
@@ -100,7 +105,7 @@ var CFG = window.SURVEY_CONFIG || {};
 var QS = new URLSearchParams(location.search);
 var IS_TEST = QS.get("test") === "1";
 var SRC = (QS.get("src") || "").replace(/[^A-Za-z0-9_-]/g,"").slice(0,40) || null;
-var KEY_STATE = "xr_survey_state_v4", KEY_PENDING = "xr_survey_pending_v4", KEY_DONE = "xr_survey_done_v4", KEY_LOCAL = "xr_survey_local_v4";
+var KEY_STATE = "xr_survey_state_v5", KEY_PENDING = "xr_survey_pending_v5", KEY_DONE = "xr_survey_done_v5", KEY_LOCAL = "xr_survey_local_v5";
 
 /* 2^(4-1) 요인 설계: [price_low, apps_many, peers_many, standalone] — 상품 1~8 */
 var PROFILES = [[0,0,0,0],[0,0,1,1],[0,1,0,1],[0,1,1,0],[1,0,0,1],[1,0,1,0],[1,1,0,0],[1,1,1,1]];
@@ -121,6 +126,21 @@ var WTP = [["lt100","100만 원 미만"],["100_150","100만 원 이상 150만 �
 var Q4 = [["apps_lack","내가 자주 사용할 만한 앱이나 콘텐츠가 부족할 것 같아서"],["substitute","기존 스마트폰이나 노트북의 앱으로 충분히 대체할 수 있어서"],["complex","앱이나 콘텐츠의 사용 방법이 복잡할 것 같아서"],["peers_lack","다른 이용자와 함께 활용할 수 있는 서비스가 부족할 것 같아서"],["supply_uncertain","새로운 앱과 콘텐츠가 지속적으로 제공될지 불확실해서"]];
 var Q4_NONE = ["none","특별히 망설일 이유가 없다"];
 var Q4_CANON = ["apps_lack","substitute","complex","peers_lack","supply_uncertain","none"];
+/* v5 신규 문항 (값 / 문구). *_CANON 은 저장 순서이자 DB 허용값 순서. */
+var INTERESTS = [["gaming","게임 (PC·콘솔·모바일)"],["tech_gadget","새로운 IT 기기·기술 체험"],["video","영상·콘텐츠 시청 (OTT·유튜브·웹툰·애니)"],["study","학습·자기계발 (어학·자격증·공부)"],
+  ["creative","창작 (사진·영상 편집·그림·음악)"],["sports","운동·야외활동"],["travel","여행·맛집 탐방"],["social","친구·모임·SNS"]];
+var INTERESTS_EXCL = ["other","기타"];
+var INTERESTS_CANON = INTERESTS.map(function(x){return x[0];}).concat(["other"]);
+var ADOPT = [["early","출시 직후, 리뷰가 많지 않아도 구매하는 편이다"],["review","리뷰가 쌓이고 평이 좋으면 구매하는 편이다"],["price_drop","가격이 내려가거나 할인할 때 구매하는 편이다"],["need_only","꼭 필요할 때만 구매한다"],["none","거의 구매하지 않는다"]];
+var VSRC = [["device","기기 자체의 성능과 착용감 (화면, 무게, 배터리)"],["ai","내장 AI 어시스턴트의 기능 (질문·번역·길 안내)"],["apps","앱 개발자들이 만든 다양한 앱 (학습·업무·게임 등)"],["content","콘텐츠 제공자의 영상·게임·체험 콘텐츠"],
+  ["peers_info","다른 이용자가 공유하는 사용법·후기·추천"],["peers_together","친구와 함께 쓰는 서비스 (같이 게임, 경험 공유)"],["price","부담 없는 가격과 할인·할부"]];
+var VSRC_NONE = ["none","특별히 의미 있는 가치가 없다"];
+var USEV = [["assistant","AI 음성 비서 및 실시간 정보 검색"],["translation","실시간 외국어 번역 및 자막 제공"],["notifications","시야에 일정·메시지·알림 표시"],["big_screen","가상 대형 화면 및 멀티스크린"],
+  ["capture","사진·영상 촬영 및 기록"],["vision_ai","주변 사물·장소를 인식하는 시각 기반 AI"],["study_work_ai","학습·업무를 돕는 AI 맞춤형 서비스"],["ar_games","AR 기반 게임 및 엔터테인먼트"]];
+var USEV_EXCL = ["none","특별히 필요한 기능이 없다"];
+var USEV_CANON = USEV.map(function(x){return x[0];}).concat(["none"]);
+function keysOf(list){ return list.map(function(x){return x[0];}); }
+function labelOf(list,k){ return list.filter(function(x){return x[0]===k;})[0][1]; }
 function inList(list,v){ return list.some(function(x){ return x[0]===v; }); }
 
 /* ---------- 유틸 ---------- */
@@ -135,20 +155,25 @@ function deviceType(){ var w=Math.min(screen.width||innerWidth, screen.height||i
 var S = null;
 function freshState(){
   return { id:uuid(), step:"intro", t_start:null, age:null, q1:null, q2:null, wtp:null, order:shuffle([1,2,3,4,5,6,7,8]), q3order:shuffle(Q3.map(function(x){return x[0];})),
-           q4order:shuffle(Q4.map(function(x){return x[0];})), intent:{}, ms:{}, q3:null, q3other:"", q4:[] };
+           q4order:shuffle(Q4.map(function(x){return x[0];})), intent:{}, ms:{}, q3:null, q3other:"", q4:[],
+           intOrder:shuffle(keysOf(INTERESTS)), interests:[], adopt:null, intro_ms:0,
+           vsOrder:shuffle(keysOf(VSRC)), vsrc:null, useOrder:shuffle(keysOf(USEV)), use:[] };
 }
 function load(){
   var raw=ls("get",KEY_STATE);
-  if(raw){ try{ var s=JSON.parse(raw); if(s && s.id && s.order && s.order.length===8 && s.q4order) return s; }catch(e){} }
+  if(raw){ try{ var s=JSON.parse(raw); if(s && s.id && s.order && s.order.length===8 && s.q4order && s.intOrder && s.vsOrder && s.useOrder) return s; }catch(e){} }
   return freshState();
 }
 function save(){ ls("set",KEY_STATE,JSON.stringify(S)); }
-var STEPS = ["intro","age","q1","q2","wtp","c0","c1","c2","c3","c4","c5","c6","c7","q3","q4"];
+var STEPS = ["intro","age","interests","adopt_style","q1","q2","product","wtp","c0","c1","c2","c3","c4","c5","c6","c7","q3","q4","value_source","use_values"];
 var enteredAt = 0;
-function leaveTiming(){ // 카드 화면 체류 시간 누적
+function leaveTiming(){ // 카드 화면·제품 소개 화면 체류 시간 누적
   if(/^c\d$/.test(S.step) && enteredAt){ var pid=S.order[+S.step[1]]; S.ms[pid]=(S.ms[pid]||0)+Math.min(Date.now()-enteredAt,600000); }
+  if(S.step==="product" && enteredAt){ S.intro_ms=Math.min((S.intro_ms||0)+Math.min(Date.now()-enteredAt,600000),3600000); }
   enteredAt=0;
 }
+// 새로고침·창 닫기 직전에도 체류 시간을 저장(이어하기 시 보존)
+window.addEventListener("pagehide",function(){ if(!S || !(S.step==="product" || /^c\d$/.test(S.step))) return; leaveTiming(); save(); enteredAt=Date.now(); });
 function go(step){ leaveTiming(); S.step=step; enteredAt=Date.now(); save(); render(); window.scrollTo(0,0); }
 function next(){ var i=STEPS.indexOf(S.step); go(STEPS[i+1]); }
 function prev(){ if(S.step==="out"){ S.age=null; go("age"); return; } var i=STEPS.indexOf(S.step); if(i>1) go(STEPS[i-1]); }
@@ -180,10 +205,16 @@ function render(){
   if(st==="intro") return renderIntro();
   if(st==="age") return screen([el("p",{class:"eyebrow",text:"시작하기 전에"}), el("h2",{text:"연령대를 선택해 주세요."}),
       choice(AGE.concat([["out","만 20~29세가 아닙니다"]]), S.age, function(v){ S.age=v; save(); setTimeout(function(){ if(S.step!=="age") return; if(v==="out") go("out"); else next(); },220); }, "연령대")]);
+  if(st==="interests") return renderMulti({ eyebrow:"평소 생활", title:"평소 시간이나 돈을 가장 많이 쓰는 취미·관심 분야는 무엇입니까? (최대 2개)",
+      label:"취미·관심 분야 (최대 2개)", items:S.intOrder.map(function(k){ return [k,labelOf(INTERESTS,k)]; }), excl:INTERESTS_EXCL,
+      get:function(){ return S.interests; }, set:function(a){ S.interests=a; }, btn:"다음", done:function(){ if(S.step==="interests") next(); } });
+  if(st==="adopt_style") return screen([el("p",{class:"eyebrow",text:"평소 생활"}), el("h2",{text:"새로 나온 IT 기기(스마트폰 제외)를 구매하는 편입니까?"}),
+      choice(ADOPT, S.adopt, function(v){ S.adopt=v; save(); advance("adopt_style"); }, "IT 기기 구매 성향")]);
   if(st==="q1") return screen([el("p",{class:"eyebrow",text:"기본 정보"}), el("h2",{text:"주로 사용하는 스마트폰은 무엇인가요?"}),
       choice([["iphone","iPhone"],["galaxy","Galaxy (삼성)"],["other","기타"]], S.q1, function(v){ S.q1=v; save(); advance("q1"); }, "스마트폰")]);
   if(st==="q2") return screen([el("p",{class:"eyebrow",text:"기본 정보"}), el("h2",{text:"AI 글라스·스마트 글라스·VR 기기를 써 본 적이 있나요?"}),
       choice([["none","사용해 본 적 없음"],["tried","체험해 본 적 있음"],["owner","보유하고 있거나 정기적으로 사용"]], S.q2, function(v){ S.q2=v; save(); advance("q2"); }, "사용 경험")]);
+  if(st==="product") return renderProduct();
   if(st==="wtp") return screen([el("p",{class:"eyebrow",text:"AI 글라스에 대해"}),
       el("p",{class:"def",text:"AI 글라스는 안경 형태의 웨어러블 기기로, 제품에 따라 렌즈나 시야에 디지털 정보를 표시하거나 AI 음성 비서, 실시간 번역, 사진·영상 촬영, 가상 화면 등의 기능을 제공합니다. 제품마다 기능은 다를 수 있습니다."}),
       el("h2",{text:"AI 글라스를 구매한다면, 지불할 수 있는 최대 금액은 어느 정도입니까?"}),
@@ -191,6 +222,12 @@ function render(){
   if(/^c\d$/.test(st)) return renderCard(+st[1]);
   if(st==="q3") return renderQ3();
   if(st==="q4") return renderQ4();
+  if(st==="value_source") return screen([el("p",{class:"eyebrow",text:"거의 끝났습니다"}),
+      el("h2",{text:"XREAL AURA를 직접 사용해 보려면, 다음 중 어떤 가치가 가장 의미 있다고 생각하십니까? (1개 선택)"}),
+      choice(S.vsOrder.map(function(k){ return [k,labelOf(VSRC,k)]; }).concat([VSRC_NONE]), S.vsrc, function(v){ S.vsrc=v; save(); advance("value_source"); }, "가장 의미 있는 가치")]);
+  if(st==="use_values") return renderMulti({ eyebrow:"마지막 질문", title:"XREAL AURA를 직접 사용해 보려면, 어떤 기능이나 가치가 있어야 한다고 생각하십니까? (최대 2개)",
+      label:"필요한 기능이나 가치 (최대 2개)", items:S.useOrder.map(function(k){ return [k,labelOf(USEV,k)]; }), excl:USEV_EXCL,
+      get:function(){ return S.use; }, set:function(a){ S.use=a; }, btn:"제출하기", done:function(){ if(S.step==="use_values") submit(); } });
   if(st==="out") return renderOut();
   if(st==="sending") return renderSending();
   if(st==="done") return renderDone();
@@ -245,12 +282,12 @@ function renderQ3(){
   var group=choice(items, S.q3, function(v){ S.q3=v; save(); [].forEach.call(group.children,function(c,i){ c.setAttribute("aria-checked",String(items[i][0]===v)); }); inputWrap.hidden=(v!=="other"); fin.disabled=false; if(v==="other") inp.focus(); }, "망설이는 이유");
   fin.addEventListener("click",function(){ if(S.q3 && S.step==="q3") next(); });
   keyHandler=null;
-  screen([ el("p",{class:"eyebrow",text:"거의 끝났습니다"}), el("h2",{text:"AI 글라스 구매를 가장 망설이게 하는 이유는 무엇인가요?"}), el("p",{class:"lead",text:"한 가지만 골라 주세요."}), group, inputWrap, fin ]);
+  screen([ el("p",{class:"eyebrow",text:"몇 가지만 더"}), el("h2",{text:"AI 글라스 구매를 가장 망설이게 하는 이유는 무엇인가요?"}), el("p",{class:"lead",text:"한 가지만 골라 주세요."}), group, inputWrap, fin ]);
 }
 function renderQ4(){
   var items=S.q4order.map(function(k){ return Q4.filter(function(x){return x[0]===k;})[0]; }); items.push(Q4_NONE);
   var wrap=el("div",{class:"opts",role:"group","aria-label":"망설이는 이유 (최대 2개)"});
-  var fin=el("button",{type:"button",class:"btn block",text:"제출하기"}); fin.style.marginTop="26px";
+  var fin=el("button",{type:"button",class:"btn block",text:"다음"}); fin.style.marginTop="26px";
   function sync(){
     [].forEach.call(wrap.children,function(c,i){ var k=items[i][0], on=S.q4.indexOf(k)>=0;
       c.setAttribute("aria-checked",String(on)); c.setAttribute("aria-disabled",String(!on && k!=="none" && S.q4.length>=2)); });  // "없다"는 항상 눌러 초기화할 수 있음
@@ -270,11 +307,59 @@ function renderQ4(){
     });
     wrap.appendChild(b);
   });
-  fin.addEventListener("click",function(){ if(S.q4.length>=1) submit(); });
+  fin.addEventListener("click",function(){ if(S.q4.length>=1 && S.step==="q4") next(); });
   keyHandler=null; sync();
-  screen([ el("p",{class:"eyebrow",text:"마지막 질문"}),
+  screen([ el("p",{class:"eyebrow",text:"몇 가지만 더"}),
     el("h2",{text:"AI 글라스에 다양한 앱과 콘텐츠가 제공되더라도, 실제 사용을 망설이게 하는 가장 큰 이유는 무엇일 것 같습니까?"}),
     el("p",{class:"hint",text:"최대 2개까지 선택할 수 있습니다."}), wrap, fin ]);
+}
+/* 복수 선택(최대 2개) 공통 화면: q4와 같은 체크박스 UI·접근성. excl(기타/없다)은 단독 선택, 항상 맨 아래·항상 클릭 가능 */
+function renderMulti(o){
+  var items=o.items.concat([o.excl]), X=o.excl[0];
+  var wrap=el("div",{class:"opts",role:"group","aria-label":o.label});
+  var fin=el("button",{type:"button",class:"btn block",text:o.btn}); fin.style.marginTop="26px";
+  function sync(){
+    var a=o.get();
+    [].forEach.call(wrap.children,function(c,i){ var k=items[i][0], on=a.indexOf(k)>=0;
+      c.setAttribute("aria-checked",String(on)); c.setAttribute("aria-disabled",String(!on && k!==X && a.length>=2)); });
+    fin.disabled = a.length<1;
+  }
+  items.forEach(function(it){
+    var b=el("button",{type:"button",class:"opt",role:"checkbox","aria-checked":"false",text:it[1]});
+    b.addEventListener("click",function(){
+      var k=it[0], a=o.get(), on=a.indexOf(k)>=0;
+      if(k===X){ a = on ? [] : [X]; }
+      else {
+        a = a.filter(function(x){ return x!==X; });
+        if(on) a = a.filter(function(x){ return x!==k; });
+        else if(a.length<2) a.push(k);
+      }
+      o.set(a); save(); sync();
+    });
+    wrap.appendChild(b);
+  });
+  fin.addEventListener("click",function(){ if(o.get().length>=1) o.done(); });
+  keyHandler=null; sync();
+  screen([ el("p",{class:"eyebrow",text:o.eyebrow}), el("h2",{text:o.title}),
+    el("p",{class:"hint",text:"최대 2개까지 선택할 수 있습니다."}), wrap, fin ]);
+}
+/* 제품 소개(중립적 사실 서술만. 가격·앱 개수·이용자 수·할인 등은 넣지 않음). 자동 진행 없음, 체류 시간은 intro_ms */
+var DIAGRAM='<svg viewBox="0 0 320 64" role="img" aria-label="안경과 컴퓨팅 퍽을 케이블로 연결한 구조 도식" focusable="false">'+
+  '<g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+
+  '<rect x="14" y="10" width="34" height="22" rx="9"/><rect x="58" y="10" width="34" height="22" rx="9"/><path d="M48 18q5-5 10 0"/>'+
+  '<path d="M92 18h8C150 18 170 23 228 23"/>'+
+  '<rect x="228" y="10" width="64" height="26" rx="8"/></g>'+
+  '<text x="53" y="54" text-anchor="middle">안경 약 95g</text><text x="260" y="54" text-anchor="middle">컴퓨팅 퍽 약 265g</text></svg>';
+function renderProduct(){
+  keyHandler=null;
+  var fig=el("div",{class:"diagram"}); fig.innerHTML=DIAGRAM;
+  var btn=el("button",{type:"button",class:"btn block",text:"다음"});
+  btn.addEventListener("click",function(){ if(S.step==="product") next(); });
+  screen([ el("p",{class:"eyebrow",text:"제품 소개"}), el("h2",{text:"XREAL AURA 소개"}),
+    el("p",{class:"prose",text:"AR·XR 안경을 만드는 XREAL의 AURA는 주변 환경을 보면서 그 위에 디지털 화면을 겹쳐 볼 수 있는 안경형 기기입니다(시야각 70도, 안경 약 95g). Google의 Android XR 기반이고 Gemini AI를 사용할 수 있습니다."}),
+    el("p",{class:"prose",text:"앱을 실행하는 컴퓨터는 안경이 아니라, 케이블로 연결하는 별도 기기인 '컴퓨팅 퍽'(약 265g)에 들어 있습니다. 조작은 손동작, 음성, 퍽의 터치패드로 합니다."}),
+    fig, btn,
+    el("p",{class:"small source",text:"정보 출처: XREAL 공식 제품 페이지, Google 공식 블로그(2026-10-28), 2026-11-15 열람."}) ]);
 }
 function renderOut(){ keyHandler=null; bar.style.width="100%"; backBtn.hidden=false; screen([el("div",{class:"center"},[el("h1",{text:"감사합니다"}), el("p",{class:"lead",text:"이번 설문은 만 20~29세를 대상으로 합니다. 관심 가져 주셔서 감사합니다."})])]); }
 function renderSending(){ keyHandler=null; screen([el("div",{class:"center"},[el("h2",{text:"응답을 저장하는 중입니다"}), el("p",{class:"lead",text:"잠시만 기다려 주세요."})])]); }
@@ -294,23 +379,33 @@ function buildPayload(){
     age_band:S.age, q1_phone:S.q1, q2_xr:S.q2, wtp_band:S.wtp, card_order:S.order, card_ms:S.order.map(function(pid){ return Math.round(S.ms[pid]||0); }),
     q3_barrier:S.q3, q3_other:(S.q3==="other" && S.q3other.trim())?S.q3other.trim().slice(0,100):null,
     q4_constraints:Q4_CANON.filter(function(k){ return S.q4.indexOf(k)>=0; }),
-    device_type:deviceType(), form_version:CFG.FORM_VERSION||"v4", is_test:IS_TEST, src:SRC };
+    interests:INTERESTS_CANON.filter(function(k){ return S.interests.indexOf(k)>=0; }),
+    adopt_style:S.adopt, value_source:S.vsrc,
+    use_values:USEV_CANON.filter(function(k){ return S.use.indexOf(k)>=0; }),
+    intro_ms:Math.max(0,Math.min(3600000,Math.round(S.intro_ms||0))),
+    device_type:deviceType(), form_version:CFG.FORM_VERSION||"v5", is_test:IS_TEST, src:SRC };
   for(var k=1;k<=8;k++) p["intent_p"+k]=S.intent[k];
   return p;
 }
 function validate(){
   if(!inList(AGE,S.age)) return "연령대 확인이 필요합니다.";
+  if(!(S.interests.length>=1 && S.interests.length<=2) || !inList(ADOPT,S.adopt)) return "앞의 문항에 응답해 주세요.";
   if(!S.q1||!S.q2||!inList(WTP,S.wtp)) return "앞의 문항에 응답해 주세요.";
   for(var k=1;k<=8;k++) if(!(S.intent[k]>=1&&S.intent[k]<=7)) return "상품 "+k+"에 응답해 주세요.";
-  if(!S.q3) return "마지막 질문에 응답해 주세요.";
-  if(!(S.q4.length>=1 && S.q4.length<=2)) return "마지막 질문에 응답해 주세요.";
+  if(!S.q3) return "남은 질문에 응답해 주세요.";
+  if(!(S.q4.length>=1 && S.q4.length<=2)) return "남은 질문에 응답해 주세요.";
+  if(!(inList(VSRC,S.vsrc) || S.vsrc==="none")) return "남은 질문에 응답해 주세요.";
+  if(!(S.use.length>=1 && S.use.length<=2)) return "마지막 질문에 응답해 주세요.";
   return null;
 }
 function missingStep(){
-  if(!inList(AGE,S.age)) return "age"; if(!S.q1) return "q1"; if(!S.q2) return "q2"; if(!inList(WTP,S.wtp)) return "wtp";
+  if(!inList(AGE,S.age)) return "age"; if(S.interests.length<1) return "interests"; if(!inList(ADOPT,S.adopt)) return "adopt_style";
+  if(!S.q1) return "q1"; if(!S.q2) return "q2"; if(!inList(WTP,S.wtp)) return "wtp";
   for(var i=0;i<8;i++) if(!S.intent[S.order[i]]) return "c"+i;
   if(!S.q3) return "q3";
-  return S.q4.length<1?"q4":null;
+  if(S.q4.length<1) return "q4";
+  if(!S.vsrc) return "value_source";
+  return S.use.length<1?"use_values":null;
 }
 var sending=false;
 function sleep(ms){ return new Promise(function(r){ setTimeout(r,ms); }); }
@@ -354,7 +449,7 @@ async function submit(isRetry){
 
 /* ---------- 시작 ---------- */
 S=load();
-if(S.step==="sending") S.step="q4";
+if(S.step==="sending") S.step="use_values";
 if(S.step==="done"||S.step==="out"||S.step==="fail"){ if(S.step==="fail" && ls("get",KEY_PENDING)){} else { S=freshState(); } }
 enteredAt=Date.now();
 render();
